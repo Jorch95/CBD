@@ -120,7 +120,7 @@ begin
 		write(arch,alum); 
 		writeln('Se borro el alumno con exito');
 		seek(arch,0);
-		Str(posRelativo,aux.edad);{para que guarda la posicion del recien eliminado en aux.edad}
+		aux.edad=posRelativo; {Guardo la posicion del recien eliminado en aux.edad}
 		aux.nombre=VALOR_ALTO;:{No cro que}
 		aux.dni=VALOR_BORRADO; { haga falta poner esto, pero por las dudas.}	
 		write(arch,alum); {Asi queda el eliminado actualmente como cabecera de la lista de eliminados para ahorrar esapacio.}

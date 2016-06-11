@@ -35,15 +35,24 @@ Var
 
 Procedure agregar(var ae: AEmpleados; var re: rEmpleado);
 var
-	tamReg:Byte; libres:Word; disponibles:integer;
+	tamReg,tamNom,tamDni,tamFecha:Byte; libres:Word; disponibles:integer;
 	tamanio:integer;
+	dni,fecha,nombre:String[31];
 begin
-	reset(ae);
+	Str(re.dni,dni);
+	Str(re.fechaNac,fecha);
+	reset(ae.espLibre);
+	reset(ae.arch);
 	With ae do begin
 		seek(espLibre,0);
-		tamReg:=(Length(re)+1); {Calculo el espacio necesario ara almacenar la info.}
-		tamanio:=tamReg;
-		Writeln('Espacio del registro: ',tamanio,' ');
+		tamNom:=(Length(re.apYnom)+1); {Calculo el espacio necesario ara almacenar la info.}
+		tamDni:=(Length(dni)+1);
+		tamFecha:=(Length(fecha)+1);
+		tamReg:=tamNom+tamDni+tamFecha;
+		Writeln('Tamanio nombre : ',tamNom,'.');
+		Writeln('Tamanio Dni: ',tamDni,'.');
+		Writeln('Tamanio fecha : ',tamFecha,'.');
+		writeln('Tamanio del registro completo: ',tamReg,'.');
 		repeat
 		read(espLibre,libres);{Leo el espacio libre de los bloques.}
 		disponibles:=libres-Round((1-PorcCarga)*CapacBloque);{bytes libres menos lo que no se pueden usar para altas.}
@@ -60,13 +69,16 @@ begin
 			seek(arch,FilePOs(espLibre)-1);
 			seek(espLibre,FilePos(espLibre)-1);
 		end;
-		Move(re,bloque.contenido[iBloque],tamReg);{Mueve 're' a contenido[iBloque] desplazandolo tamReg}
+		Move(re.apYnom,bloque.contenido[iBloque],tamNom);
+		Move(re.dni,bloque.contenido[iBloque],tamDni);
+		Move(re.fechaNac,bloque.contenido[iBloque],tamFecha);
 		Inc(bloque.cantRegs);
 		Dec(libres,tamReg);	
 		write(arch,bloque);
 		write(espLibre,libres);
 	end; {del With}
-	close(ae);
+	close(ae.espLibre);
+	close(ae.arch);
 end;
 
 {Procedure imprimir(var ae:AEmpleados);
@@ -77,14 +89,16 @@ begin
 }			
 Begin
 	Writeln('Comienzo del programa');
-	rewrite(ae);
-	assign(ae,'file');	
+	assign(ae.arch,'archivo');
+	assign(ae.espLibre,'archivolibre');
+	rewrite(ae.arch);
+	rewrite(ae.espLibre);
 	writeln('Agrega un empleado');
 	Writeln('Dni: '); readln(dni);
 	writeln('Apellido y nombre'); readln(apYnom);
 	writeln('Fecha de nacimiento'); readln(fecha);
 	while(dni <> 9999) do begin
-		with re do
+		with re do begin
 			dni:=dni;	
 			apYnom:=apYnom;
 			fechaNac:=fecha;

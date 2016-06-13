@@ -16,6 +16,7 @@ Var
 aProd: aProducto;
 aText: text;
 rProd: producto;
+cod: integer;
 
 Procedure crearArchivoB(var aProd: aProducto);
 var
@@ -45,6 +46,7 @@ begin
 	if(nLibre=0) then begin
 		seek(aProd,FileSize(aProd));{No hay ningun espacio para aprovechar, se agrega al final}
 	end else begin
+		writeln('Se va a agregar en el registro eliminado con el stock: ',nLibre);
 		seek(aProd,nLibre);
 		read(aProd,aux);{Aca guardo el proximo en la lista para poner en la cabecera}
 		seek(aProd,(FilePos(aProd)-1));
@@ -62,7 +64,7 @@ var
 	ultElim:Word;
 begin
 	reset(aProd);
-	read(aProd,iUlt);
+	read(aProd,iUlt);{ultimo eliminado hasta antes de entrar en este procedimiento}
 	ultElim:=iUlt.stock;{Posicion del ultimo eliminado}
 	repeat read(aProd,aux) until aux.cod=cod;
 	if (aux.cod=cod) then begin
@@ -81,6 +83,23 @@ begin
 	Writeln('Saliste del proceso eliminar');
 	close(aProd);
 end;
+
+Procedure imprimir(var aProd: aProducto);
+var
+	rProd:producto;
+begin
+	reset(aProd);
+	read(aProd,rProd); {este se descarta ya que es la cabecera de la lista de eliminados}
+	while(not EOF(aProd)) do begin
+		read(aProd,rProd);
+		if (rProd.cod = VALOR_BORRADO) then begin
+			writeln('Se encontro un registro con marca de eliminado');
+		end else begin
+			writeln('Codigo de producto: ',rProd.cod,' de nombre: ',rProd.nombre,' ; Cantidad de stock: ',rProd.stock,' .');
+		end;
+	end;
+	close(aProd);
+end;			
 			
 Begin
 	Writeln('Empieza el programa principal');
@@ -96,7 +115,6 @@ Begin
 	readln(aText,rProd.stock);
 	writeln('dato stock: ',rProd.stock);}
 	while(not EOF(aText)) do begin
-		Writeln('Se siguen leyendo');
 		readln(aText,rProd.cod,rProd.nombre);
 		writeln('dato cod: ',rProd.cod,' dato nombre: ', rProd.nombre);
 		readln(aText,rProd.desc);
@@ -104,9 +122,32 @@ Begin
 		readln(aText,rProd.stock);
 		writeln('dato stock: ',rProd.stock);
 		agregar(aProd,rProd);
+		Writeln('Se siguen leyendo');
 	end;
 	writeln('Termino la carga');
 	writeln('Luego hago la parte de eliminar');
+	writeln('Para eliminar, ingrese codigos de productos, si quiere terminar el proceso de eliminado ingrese 9999.');
+	writeln('Ingrese codigo:');
+	readln(cod);
+	while(cod <> 9999) do begin
+		borrar(aProd,cod);
+		writeln('Ingrese otro codigo:');
+		readln(cod);
+	end;
+	writeln();writeln();
+	writeln('Luego de borrar tenemos que agregar mas datos, asi se aprovechan los espacios que se eliminaron');
+	rProd.cod:=0; {asi no tengo que copiar todo antes para que entre al while sin problemas}
+	while(rProd.cod <> 9999) do begin
+		Writeln('Ingrese Codigo de producto'); readln(rProd.cod);
+		writeln('Ingrese nombre del producto');readln(rProd.nombre);
+		writeln('Ingrese descripcion del producto');readln(rProd.desc);
+		writeln('Ingrese stock del producto');readln(rprod.stock);
+		agregar(aProd,rProd);
+	end;
+	writeln();Writeln();
+	Writeln('Ahora se imprime el archivo final.');
+	writeln(); writeln();
+	imprimir(aProd);
 	close(aText);
 end.
 

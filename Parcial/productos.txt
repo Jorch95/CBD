@@ -4,3 +4,27 @@ Fumar es perjucial para la salud
 43 Gaseosas
 desde Coca-Cola hasta Manaos
 300
+50 Papitas
+AntoPapita@gmail.com
+1000
+1 Te
+El te negro disminuye el danio hecho a los pulmones por el cigarrillo.
+50000
+2 Perfume
+Se me estan acabando las cosas para decir sobre los productos.
+234234
+3 Lapiceras
+Tengo que ver que la lista de eliminados este hecha correctamente
+123234
+4 Tacos
+Solamente tengo que agregar mas 'writeln's' al programa
+123123
+10 hojas
+casi rompo todo escribiendo mal este archivo de texto.
+100000
+5 celulares
+No se cuantos mas hacer la verdad
+27
+6 impresoras
+Creo que podria dejarlo aca....
+18434
